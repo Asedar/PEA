@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include "Data.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -17,10 +18,14 @@ public:
     int targetFunction(vector<vector<int>> &cityData);
     void branchAndBound();
     vector<int> dynamicProgramming(int point, vector<int> &cities);
-    void clearNodes();
+    void clearDataStructures();
 private:
     Data *data;
     unordered_map<string, string> nodes;
+
+    //vector<vector<int>> modifiedCD;
+
+    int reduceMatrix(vector<vector<int>> &matrix, int xPoint = -1, int yPoint = -1);
 };
 
 #endif //PEA_ALGORITHMS_H

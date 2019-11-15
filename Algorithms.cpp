@@ -47,6 +47,60 @@ Algorithms::Algorithms(Data *data):data(data)
 
 void Algorithms::branchAndBound()
 {
+    struct Node
+    {
+        vector<int> path;
+        int point;
+        int lowerBound;
+        bool isLeaf = true;
+        vector<vector<int>> modifiedCD;
+        Node(vector<int> &path, int point, vector<vector<int>> modifiedCD)
+        : path(path), point(point), modifiedCD(modifiedCD){}
+    };
+    data->clear();
+    vector<Node*> nodeList;
+    vector<int> path = {};
+    nodeList.push_back(new Node( path, 0, data->cityData));
+    nodeList[0]->lowerBound = reduceMatrix(nodeList[0]->modifiedCD);
+    Node * currentNode = nodeList[0];
+    currentNode->isLeaf = false;
+    vector<int> cities = data->cities;
+
+    while(true)
+    {
+        path.clear();
+        path = currentNode->path;
+        path.push_back(currentNode->point);
+        if(path.size() == data->cities.size() + 1) break;
+        cities = data->cities;
+        for(int x = 0; x < currentNode->path.size(); x++)
+        {
+            cities.erase(std::remove(cities.begin(), cities.end(), currentNode->path[x]), cities.end());
+        }
+        cities.erase(std::remove(cities.begin(), cities.end(), currentNode->point), cities.end());
+        for(int x = 0; x < cities.size(); x++)
+        {
+            nodeList.push_back(new Node(path, cities[x], currentNode->modifiedCD));
+            nodeList.back()->lowerBound = reduceMatrix(nodeList.back()->modifiedCD, currentNode->point, cities[x]) + currentNode->lowerBound + currentNode->modifiedCD[currentNode->point][nodeList.back()->point];
+        }
+        int min = INT32_MAX;
+        for(int x = 0; x < nodeList.size(); x++)
+        {
+            if(nodeList[x]->isLeaf && nodeList[x]->lowerBound < min)
+            {
+                currentNode = nodeList[x];
+                min = currentNode->lowerBound;
+            }
+        }
+        currentNode->isLeaf = false;
+
+    }
+    data->minPath = currentNode->lowerBound;
+    data->path = path;
+    for(int x = 0; x < nodeList.size(); x++)
+    {
+        delete nodeList[x];
+    }
 
 }
 
@@ -120,7 +174,70 @@ vector<int> Algorithms::dynamicProgramming(int point, vector<int> &cities)
     return minPath;
 }
 
-void Algorithms::clearNodes()
+void Algorithms::clearDataStructures()
 {
     nodes.clear();
+    //modifiedCD.clear();
+}
+
+int Algorithms::reduceMatrix(vector<vector<int>> &matrix, int xPoint, int yPoint)
+{
+    if(xPoint != -1 && yPoint != -1)
+    {
+        for(int x = 0; x < matrix.size(); x++)
+        {
+            matrix[xPoint][x] = -1;
+            matrix[x][yPoint] = -1;
+        }
+        matrix[yPoint][xPoint] = -1;
+    }
+    int totalRow = 0, totalColumn = 0;
+    for(int x = 0; x < matrix.size(); x++)
+    {
+        int min = INT32_MAX;
+        for(int y = 0; y < matrix.size(); y++)
+        {
+            if(matrix[x][y] != -1 && matrix[x][y] < min)
+            {
+                min = matrix[x][y];
+            }
+        }
+
+        if(min < INT32_MAX)
+        {
+            for(int y = 0; y < matrix.size(); y++)
+            {
+                if(matrix[x][y] != -1)
+                {
+                    matrix[x][y] -= min;
+                }
+            }
+            totalRow += min;
+        }
+    }
+
+    for(int x = 0; x < matrix.size(); x++)
+    {
+        int min = INT32_MAX;
+        for(int y = 0; y < matrix.size(); y++)
+        {
+            if(matrix[y][x] != -1 && matrix[y][x] < min)
+            {
+                min = matrix[y][x];
+            }
+        }
+
+        if(min < INT32_MAX)
+        {
+            for(int y = 0; y < matrix.size(); y++)
+            {
+                if(matrix[y][x] != -1)
+                {
+                    matrix[y][x] -= min;
+                }
+            }
+            totalColumn += min;
+        }
+    }
+    return totalColumn + totalRow;
 }

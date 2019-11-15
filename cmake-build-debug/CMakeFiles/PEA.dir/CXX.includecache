@@ -17,6 +17,8 @@ unordered_map
 -
 Data.h
 C:/Users/Milosz/Desktop/PEA/Data.h
+algorithm
+-
 
 C:/Users/Milosz/Desktop/PEA/Data.h
 vector
@@ -25,32 +27,4 @@ iostream
 -
 fstream
 -
-
-C:/Users/Milosz/Desktop/PEA/Test.h
-Data.h
-C:/Users/Milosz/Desktop/PEA/Data.h
-chrono
--
-vector
--
-fstream
--
-
-C:/Users/Milosz/Desktop/PEA/main.cpp
-iostream
--
-fstream
--
-cstdlib
--
-vector
--
-ctime
--
-Algorithms.h
-C:/Users/Milosz/Desktop/PEA/Algorithms.h
-Data.h
-C:/Users/Milosz/Desktop/PEA/Data.h
-Test.h
-C:/Users/Milosz/Desktop/PEA/Test.h
 

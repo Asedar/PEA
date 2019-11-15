@@ -89,7 +89,13 @@ int main()
                 {
                     break;
                 }
-                //branchAndBound();
+                algorithms.branchAndBound();
+                cout << endl << data->minPath << " " << endl << "0 ";
+                for(int x = data->path.size() - data->cityData.size() + 1; x < data->path.size(); x++)
+                {
+                    cout << data->path[x] << " ";
+                }
+                cout << endl;
                 break;
             case 5:
             {
@@ -97,7 +103,9 @@ int main()
                 {
                     break;
                 }
-                algorithms.clearNodes();
+
+                algorithms.clearDataStructures();
+                data->clear();
                 vector<int> path = algorithms.dynamicProgramming(0, data->cities);
                 cout << endl << "0 ";
                 for(int x = path.size() - 1; x > 0; x--)

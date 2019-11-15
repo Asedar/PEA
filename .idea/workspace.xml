@@ -36,11 +36,6 @@
     <select />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>data-&gt;</find>
-    </findStrings>
-  </component>
   <component name="ProjectId" id="1S7ZPa6A2pk9sDfOJcQ9QQHQ9US" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -88,22 +83,14 @@
       <workItem from="1573336065803" duration="3317000" />
       <workItem from="1573503507417" duration="20493000" />
       <workItem from="1573675241515" duration="1402000" />
-      <workItem from="1573676889799" duration="4039000" />
+      <workItem from="1573676889799" duration="5705000" />
+      <workItem from="1573695740351" duration="2492000" />
+      <workItem from="1573751796367" duration="1070000" />
+      <workItem from="1573755833546" duration="18628000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Algorithms.cpp</url>
-          <line>86</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
