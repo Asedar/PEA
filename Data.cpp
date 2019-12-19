@@ -40,6 +40,35 @@ void Data::loadFile()
     }
 }
 
+void Data::loadFile(string name)
+{
+    fstream file;
+
+    file.open(name);
+    if(file.good())
+    {
+        int size;
+        string title;
+        file >> title;
+        file >> size;
+        cityData.clear();
+        cityData.resize(size);
+        cout << endl;
+        for(int i = 0; i < size; i++)
+        {
+            for(int l = 0; l < size; l++)
+            {
+                int value;
+                file >> value;
+                cityData[i].push_back(value);
+                cout << value << " ";
+            }
+            cout << endl;
+        }
+        clear();
+    }
+}
+
 void Data::generateData()
 {
     cout << endl << "Podaj rozmiar: ";
@@ -81,6 +110,8 @@ void Data::clear()
 
 void Data::randomMatrix(int size)
 {
+    cityData.clear();
+    cityData.resize(size);
     for(int x = 0; x < size; x++)
     {
         for(int y = 0; y < size; y++)

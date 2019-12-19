@@ -16,6 +16,7 @@ public:
     vector<int> path;
 
     void loadFile();
+    void loadFile(string name);
     void generateData();
     void clear();
     void randomMatrix(int size);

@@ -27,27 +27,17 @@ void showMenu()
         << "4. Branch & bound" << endl
         << "5. Programowanie dynamiczne" << endl
         << "6. Wartosc funkcji celu" << endl
-        << "7. Zakoncz" << endl;
+        << "7. Tabu Search" << endl
+        << "8. Simulated Annealing" << endl
+        << "9. Test" << endl;
 }
-
-void firstStageMenu()
-{
-    cout << "Wybierz algorytm: " << endl
-    << "1. Brute force" << endl
-    << "2. Branch & bound" << endl
-    << "3. Programowanie dynamiczne" << endl
-    << "4. Powrot" << endl;
-}
-
-//void secondStageMenu();
-//void thirdStageMenu();
 
 int main()
 {
     srand( time( NULL ) );
     Data *data = new Data();
     Algorithms algorithms(data);
-    Test test(data);
+    Test test(data, &algorithms);
 
     while(1)
     {
@@ -123,7 +113,47 @@ int main()
                 cout << endl << algorithms.targetFunction(data->cityData) << endl;
                 break;
             case 7:
-                return 0;
+                if(data->cityData.empty())
+                {
+                    break;
+                }
+                algorithms.clearDataStructures();
+                data->clear();
+                cout << endl << "Podaj czas wykonywania[s]: ";
+                long long time;
+                cin >> time;
+                algorithms.tabuSearch(time);
+                cout << endl << data->minPath << endl;
+
+                for(int x = 0; x < data->path.size(); x++)
+                {
+                    cout << data->path[x] << " ";
+                }
+                break;
+            case 8:
+                if(data->cityData.empty())
+                {
+                    break;
+                }
+                algorithms.clearDataStructures();
+                data->clear();
+                cout << endl << "Podaj temperature: ";
+                float temp;
+                cin >> temp;
+                cout << endl << "Podaj cooling rate: ";
+                float cool;
+                cin >> cool;
+                algorithms.simulatedAnnealing(temp, cool);
+                cout << endl << data->minPath << endl;
+
+                for(int x = 0; x < data->path.size(); x++)
+                {
+                    cout << data->path[x] << " ";
+                }
+                break;
+            case 9:
+                test.fixedDataTest(30);
+                break;
             default:
                 cout << "Wybrana opcja jest nieprawidlowa!" << endl;
                 break;
