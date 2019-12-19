@@ -8,6 +8,7 @@ CMakeFiles/PEA.dir/Algorithms.cpp.obj: ../Data.h
 CMakeFiles/PEA.dir/Data.cpp.obj: ../Data.cpp
 CMakeFiles/PEA.dir/Data.cpp.obj: ../Data.h
 
+CMakeFiles/PEA.dir/Test.cpp.obj: ../Algorithms.h
 CMakeFiles/PEA.dir/Test.cpp.obj: ../Data.h
 CMakeFiles/PEA.dir/Test.cpp.obj: ../Test.cpp
 CMakeFiles/PEA.dir/Test.cpp.obj: ../Test.h
