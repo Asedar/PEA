@@ -16,6 +16,7 @@ public:
     Test(Data *data, Algorithms *alg);
     void randomDataAutoTest(void (*testFunction)(), int size, int howManyTries);
     void fixedDataTest(int howManyTries);
+    void fixedDataTest();
 
 private:
     Data *data;

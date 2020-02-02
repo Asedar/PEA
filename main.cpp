@@ -29,7 +29,8 @@ void showMenu()
         << "6. Wartosc funkcji celu" << endl
         << "7. Tabu Search" << endl
         << "8. Simulated Annealing" << endl
-        << "9. Test" << endl;
+        << "9. Genetic Algorithm" << endl
+        << "0. Test" << endl;
 }
 
 int main()
@@ -122,6 +123,7 @@ int main()
                 cout << endl << "Podaj czas wykonywania[s]: ";
                 long long time;
                 cin >> time;
+
                 algorithms.tabuSearch(time);
                 cout << endl << data->minPath << endl;
 
@@ -142,8 +144,13 @@ int main()
                 cin >> temp;
                 cout << endl << "Podaj cooling rate: ";
                 float cool;
+                //long long t;
                 cin >> cool;
-                algorithms.simulatedAnnealing(temp, cool);
+                //for(int ind = 0; ind < 10; ind++)
+                //{
+                    algorithms.simulatedAnnealing(temp, cool);
+                //}
+
                 cout << endl << data->minPath << endl;
 
                 for(int x = 0; x < data->path.size(); x++)
@@ -152,6 +159,37 @@ int main()
                 }
                 break;
             case 9:
+                if(data->cityData.empty())
+                {
+                    break;
+                }
+                algorithms.clearDataStructures();
+                data->clear();
+                cout << endl << "Podaj rozmiar populacji: ";
+                int pop;
+                cin >> pop;
+                cout << endl << "Podaj ilosc nowych generacji: ";
+                int gen;
+                cin >> gen;
+                cout << endl << "Podaj szanse na mutacje: ";
+                float mut;
+                cin >> mut;
+                cout << endl << "Podaj szanse na krzyzowanie: ";
+                float cross;
+                cin >> cross;
+                cout << endl << "Wybierz sposob wybierania rodzicow: \n 1) Best  \n 2) Ruletka ";
+                int draft;
+                cin >> draft;
+                algorithms.geneticAlgorithm(pop, mut, gen, cross, draft);
+
+                cout << endl << data->minPath << endl;
+
+                for(int x = 0; x < data->path.size(); x++)
+                {
+                    cout << data->path[x] << " ";
+                }
+                break;
+            case 0:
                 test.fixedDataTest(30);
                 break;
             default:

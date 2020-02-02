@@ -260,6 +260,7 @@ void Algorithms::tabuSearch(long long time)
     bool end = false;
     vector<int> currentPath;
     generatePath(currentPath);
+    generateRandomPath(currentPath);
     vector<int> bestPath = currentPath;
     int bestMinPath = INT32_MAX;
     vector<Tabu*> tabu;
@@ -344,6 +345,7 @@ void Algorithms::tabuSearch(long long time)
             //end = true;
         if(chrono::duration_cast<chrono::seconds>(checkpoint - start).count() >= time)
             end = true;
+        //time--;
     }
     data->minPath = bestMinPath;
     data->path = bestPath;
@@ -407,6 +409,7 @@ void Algorithms::simulatedAnnealing(float temp, float coolingRate)
 {
     vector<int> currentPath;
     generatePath(currentPath);
+    generateRandomPath(currentPath);
     float currentMinPath = checkPathValue(currentPath);
 
     vector<int> bestPath = currentPath;
@@ -420,16 +423,18 @@ void Algorithms::simulatedAnnealing(float temp, float coolingRate)
     std::uniform_real_distribution<double> rand1(0, 1);
 
 
+    bool end = false;
+    auto start = chrono::steady_clock::now();
     while(temp > 1)
     {
         vector<int> neighbourPath = currentPath;
-        int pointX = rand() %(currentPath.size() - 1) + 1;
-        int pointY = rand() %(currentPath.size() - 1) + 1;
+        int pointX = rand() %(currentPath.size() - 2) + 1;
+        int pointY = rand() %(currentPath.size() - 2) + 1;
         while(true)
         {
             if(pointX == pointY)
             {
-                pointY = rand() %(currentPath.size() - 1) + 1;
+                pointY = rand() %(currentPath.size() - 2) + 1;
             }
             else
                 break;
@@ -439,7 +444,7 @@ void Algorithms::simulatedAnnealing(float temp, float coolingRate)
         neighbourPath[pointX] = neighbourPath[pointY];
         neighbourPath[pointY] = help;
         float neighbourPathLength = checkPathValue(currentPath);
-        if(neighbourPathLength < currentMinPath || ((neighbourPathLength - currentMinPath)/temp)<rand1(rng))
+        if(neighbourPathLength < currentMinPath || exp(-(neighbourPathLength - currentMinPath)/temp)>rand1(rng))
         {
             currentMinPath = neighbourPathLength;
             currentPath = neighbourPath;
@@ -454,3 +459,176 @@ void Algorithms::simulatedAnnealing(float temp, float coolingRate)
     data->path = bestPath;
     data->minPath = bestMinPath;
 }
+
+void Algorithms::geneticAlgorithm(int populationSize, float mutationChance, int generations, float crossingChance, int draft)
+{
+    std::mt19937_64 rng;
+    // initialize the random number generator with time-dependent seed
+    uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    std::seed_seq ss{uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed>>32)};
+    rng.seed(ss);
+    // initialize a uniform distribution between 0 and 1
+    std::uniform_real_distribution<double> rand1(0, 1);
+
+    vector<Fitness> population;
+    vector<int> bestPath;
+    vector<int> path;
+    int bestPathValue = INT32_MAX;
+    generatePath(path);
+    for (int g = 0; g < populationSize; g++) {
+        generateRandomPath(path);
+        population.emplace_back(path, checkPathValue(path));
+    }
+    while(generations > 0) {
+
+        //mating pool
+
+        int a, b;
+
+        switch (draft){
+            case 1:
+                bestDraft(a, b, population);
+                break;
+            case 2:
+                rouletteDraft(a, b, population);
+                break;
+        }
+        Fitness parentA = population[a];
+        Fitness parentB = population[b];
+        population.clear();
+        for (int x = 0; x < populationSize; x++) {
+
+            //crossing
+
+            path.clear();
+            if(rand1(rng) < crossingChance) {
+                path.resize(parentA.path.size() - 2);
+                fill(path.begin(), path.end(), -1);
+                path.insert(path.begin(), 0);
+                path.push_back(0);
+                OXCrossing(path, parentA, parentB);
+
+            } else {
+                path = parentA.path;
+            }
+
+            //mutation
+
+            if (rand1(rng) < mutationChance) {
+                int cityA = rand() % (path.size() - 2) + 1;
+                int cityB = rand() % (path.size() - 2) + 1;
+                while (true) {
+                    if (cityA == cityB) {
+                        cityB = rand() % (path.size() - 2) + 1;
+                    } else
+                        break;
+                }
+                int help = path[cityA];
+                path[cityA] = path[cityB];
+                path[cityB] = help;
+            }
+
+            //evaluation & new generation
+
+            int currentPathValue = checkPathValue(path);
+            population.emplace_back(path, currentPathValue);
+            if (currentPathValue < bestPathValue) {
+                bestPath = path;
+                bestPathValue = currentPathValue;
+            }
+        }
+        generations--;
+    }
+    data->path = bestPath;
+    data->minPath = bestPathValue;
+}
+
+void Algorithms::bestDraft(int &A, int &B, vector<Fitness> pop)
+{
+    float maxA = -1.0f;
+    float maxB = -1.0f;
+    int indexA, indexB;
+
+    for(int x = 0; x < pop.size(); x++)
+    {
+        if(pop[x].fitness > maxA)
+        {
+            maxA = pop[x].fitness;
+            indexA = x;
+        }
+    }
+    for(int x = 0; x < pop.size(); x++)
+    {
+        if(pop[x].fitness > maxB && x != indexA)
+        {
+            maxB = pop[x].fitness;
+            indexB = x;
+        }
+    }
+
+    A = indexA;
+    B = indexB;
+}
+
+
+void Algorithms::OXCrossing(vector<int> &path, Fitness parentA, Fitness parentB) {
+    int randA = rand() % (path.size() - 2) + 1;
+    int randB = rand() % (path.size() - 2) + 1;
+    while (true) {
+        if (randA == randB) {
+            randB = rand() % (path.size() - 2) + 1;
+        } else
+            break;
+    }
+    int max, min;
+    if (randA > randB) {
+        max = randA;
+        min = randB;
+    } else {
+        max = randB;
+        min = randA;
+    }
+    unordered_set<int> usedValues;
+    for (int y = min; y <= max; y++) {
+        path[y] = parentA.path[y];
+        usedValues.insert(path[y]);
+    }
+    for (int z = 1; z < path.size() - 1; z++) {
+        if (path[z] == -1) {
+            for (int i = 1; i < parentB.path.size() - 1; i++) {
+                if (usedValues.find(parentB.path[i]) == usedValues.end()) {
+                    path[z] = parentB.path[i];
+                    usedValues.insert(parentB.path[i]);
+                    break;
+                }
+            }
+        }
+    }
+
+}
+
+void Algorithms::rouletteDraft(int &A, int &B, vector<Fitness> pop) {
+    vector<int> chance;
+    float sum = 0;
+    for(int x = 0; x < pop.size(); x++) {
+        sum += pop[x].fitness;
+    }
+    long long size = floor(1/sum)*pop.size();
+    for(int x = 0; x < pop.size(); x++) {
+        int length = ceil((pop[x].fitness / sum)*size);
+        for(int y = 0; y < length; y++) {
+            chance.push_back(x);
+        }
+    }
+    int a = rand() % chance.size();
+    A = chance[a];
+    int b = rand() % chance.size();
+    B = chance[b];
+    while(A == B) {
+        b = rand() % chance.size();
+        B = chance[b];
+    }
+
+}
+
+
